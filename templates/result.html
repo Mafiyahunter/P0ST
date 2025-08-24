@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Logs - Multi Poster</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Consolas', monospace;
+      background: radial-gradient(circle at top right, #000428, #004e92);
+      color: #00ff9d;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffa1;
+      text-shadow: 0 0 15px #00ffa1;
+    }
+    pre {
+      background: rgba(15, 20, 30, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #00ffa1;
+      box-shadow: 0 0 25px #00ffa1;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    a {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #00ffa1;
+      font-weight: bold;
+    }
+    a:hover {
+      text-shadow: 0 0 12px #00ffa1;
+    }
+  </style>
+</head>
+<body>
+  <h1>📜 Posting Logs</h1>
+  <pre>
+{% for log in logs %}
+{{ log }}
+{% endfor %}
+  </pre>
+  <a href="/">⬅️ Back to Home</a>
+</body>
+</html>
