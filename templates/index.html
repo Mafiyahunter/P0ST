@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Multi-Poster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1877f2;
+            --secondary: #42b72a;
+            --dark: #18191a;
+            --dark-gray: #242526;
+            --light-gray: #3a3b3c;
+            --text: #e4e6eb;
+            --card-bg: #242526;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-gray) 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #b0b3b8;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .card-title i {
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b3b8;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #3a3b3c;
+            border: 2px solid #4e4f50;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
+        }
+        
+        .file-input-container {
+            position: relative;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background-color: #3a3b3c;
+            border: 2px dashed #4e4f50;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input-label:hover {
+            border-color: var(--primary);
+        }
+        
+        .file-input-label span {
+            color: #b0b3b8;
+        }
+        
+        .file-input-label i {
+            color: var(--primary);
+        }
+        
+        .file-input-container input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, var(--primary) 0%, #0e5fcd 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(90deg, #0e5fcd 0%, var(--primary) 100%);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(90deg, var(--secondary) 0%, #369423 100%);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #369423 0%, var(--secondary) 100%);
+            box-shadow: 0 4px 12px rgba(66, 183, 42, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #4e4f50;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .post-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .post-type {
+            flex: 1;
+            text-align: center;
+            padding: 20px 15px;
+            background-color: #3a3b3c;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .post-type:hover {
+            border-color: var(--primary);
+        }
+        
+        .post-type.selected {
+            border-color: var(--primary);
+            background-color: rgba(24, 119, 242, 0.15);
+        }
+        
+        .post-type i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .post-type h3 {
+            margin-bottom: 5px;
+        }
+        
+        .post-type p {
+            color: #b0b3b8;
+            font-size: 0.9rem;
+        }
+        
+        .status-container {
+            margin-top: 30px;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .status-box {
+            background-color: #3a3b3c;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--dark-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .status-item i {
+            font-size: 1.2rem;
+        }
+        
+        .status-item.success {
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .status-item.success i {
+            color: var(--secondary);
+        }
+        
+        .status-item.error {
+            border-left: 4px solid #fa383e;
+        }
+        
+        .status-item.error i {
+            color: #fa383e;
+        }
+        
+        .status-item.warning {
+            border-left: 4px solid #f7b500;
+        }
+        
+        .status-item.warning i {
+            color: #f7b500;
+        }
+        
+        .status-item.info {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .status-item.info i {
+            color: var(--primary);
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #3a3b3c;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .token-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #3a3b3c;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .token-status span:last-child {
+            font-weight: 600;
+        }
+        
+        .valid {
+            color: var(--secondary);
+        }
+        
+        .invalid {
+            color: #fa383e;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fab fa-facebook logo-icon"></i>
+                <h1>Facebook Multi-Poster</h1>
+            </div>
+            <p class="subtitle">Efficiently distribute your content across multiple accounts with text, photo, or video posts</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-cog"></i>
+                    Configuration
+                </h2>
+                
+                <div class="form-group">
+                    <label for="tokenFile">Access Token File <span class="badge">Required</span></label>
+                    <div class="file-input-container">
+                        <div class="file-input-label">
+                            <span>Select token file (.txt)</span>
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <input type="file" id="tokenFile" accept=".txt">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tagFile">Tags File</label>
+                    <div class="file-input-container">
+                        <div class="file-input-label">
+                            <span>Select tags file (.txt)</span>
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <input type="file" id="tagFile" accept=".txt">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Post Type</label>
+                    <div class="post-type-selector">
+                        <div class="post-type selected" data-type="text">
+                            <i class="fas fa-font"></i>
+                            <h3>Text</h3>
+                            <p>Text only posts</p>
+                        </div>
+                        <div class="post-type" data-type="photo">
+                            <i class="fas fa-image"></i>
+                            <h3>Photo</h3>
+                            <p>Image posts</p>
+                        </div>
+                        <div class="post-type" data-type="video">
+                            <i class="fas fa-video"></i>
+                            <h3>Video</h3>
+                            <p>Video posts</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="textConfig">
+                    <div class="form-group">
+                        <label for="textFile">Text Content File <span class="badge">Required</span></label>
+                        <div class="file-input-container">
+                            <div class="file-input-label">
+                                <span>Select text file (.txt)</span>
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <input type="file" id="textFile" accept=".txt">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="mediaConfig" class="hidden">
+                    <div class="form-group">
+                        <label for="mediaFile">Media List File <span class="badge">Required</span></label>
+                        <div class="file-input-container">
+                            <div class="file-input-label">
+                                <span>Select media list file (.txt)</span>
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <input type="file" id="mediaFile" accept=".txt">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="captionFile">Caption File <span class="badge">Required</span></label>
+                        <div class="file-input-container">
+                            <div class="file-input-label">
+                                <span>Select caption file (.txt)</span>
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <input type="file" id="captionFile" accept=".txt">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delay">Delay Between Posts (seconds)</label>
+                    <input type="number" id="delay" min="1" value="10">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-tasks"></i>
+                    Actions
+                </h2>
+                
+                <div class="form-group">
+                    <button id="validateBtn" class="btn">
+                        <i class="fas fa-check-circle"></i> Validate Tokens
+                    </button>
+                </div>
+                
+                <div id="tokenResults" class="hidden">
+                    <div class="token-status">
+                        <span>Valid Tokens:</span>
+                        <span id="validCount" class="valid">0</span>
+                    </div>
+                    
+                    <div class="token-status">
+                        <span>Invalid Tokens:</span>
+                        <span id="invalidCount" class="invalid">0</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button id="startBtn" class="btn btn-secondary" disabled>
+                        <i class="fas fa-paper-plane"></i> Start Posting
+                    </button>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Progress</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="status-header">
+                <h2 class="card-title">
+                    <i class="fas fa-terminal"></i>
+                    System Status
+                </h2>
+                <button id="clearLogs" class="btn" style="width: auto; padding: 8px 16px;">
+                    <i class="fas fa-trash"></i> Clear Logs
+                </button>
+            </div>
+            
+            <div class="status-box" id="statusBox">
+                <div class="status-item info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>System initialized. Ready to configure.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const tokenFile = document.getElementById('tokenFile');
+            const tagFile = document.getElementById('tagFile');
+            const textFile = document.getElementById('textFile');
+            const mediaFile = document.getElementById('mediaFile');
+            const captionFile = document.getElementById('captionFile');
+            const delayInput = document.getElementById('delay');
+            const validateBtn = document.getElementById('validateBtn');
+            const startBtn = document.getElementById('startBtn');
+            const statusBox = document.getElementById('statusBox');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const validCount = document.getElementById('validCount');
+            const invalidCount = document.getElementById('invalidCount');
+            const tokenResults = document.getElementById('tokenResults');
+            const textConfig = document.getElementById('textConfig');
+            const mediaConfig = document.getElementById('mediaConfig');
+            const clearLogsBtn = document.getElementById('clearLogs');
+            
+            // Post type elements
+            const postTypes = document.querySelectorAll('.post-type');
+            
+            // State
+            let tokens = [];
+            let validTokens = [];
+            let postingActive = false;
+            
+            // Event listeners
+            postTypes.forEach(type => {
+                type.addEventListener('click', () => {
+                    const postType = type.getAttribute('data-type');
+                    
+                    // Update UI
+                    postTypes.forEach(t => t.classList.remove('selected'));
+                    type.classList.add('selected');
+                    
+                    // Show/hide config sections
+                    if (postType === 'text') {
+                        textConfig.classList.remove('hidden');
+                        mediaConfig.classList.add('hidden');
+                    } else {
+                        textConfig.classList.remove('hidden');
+                        mediaConfig.classList.remove('hidden');
+                    }
+                    
+                    addStatusMessage(`Post type changed to: ${postType}`, 'info');
+                });
+            });
+            
+            validateBtn.addEventListener('click', validateTokens);
+            startBtn.addEventListener('click', startPosting);
+            clearLogsBtn.addEventListener('click', clearLogs);
+            
+            // File input change handlers
+            tokenFile.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    addStatusMessage(`Token file selected: ${this.files[0].name}`, 'success');
+                }
+            });
+            
+            tagFile.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    addStatusMessage(`Tag file selected: ${this.files[0].name}`, 'success');
+                }
+            });
+            
+            textFile.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    addStatusMessage(`Text file selected: ${this.files[0].name}`, 'success');
+                }
+            });
+            
+            mediaFile.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    addStatusMessage(`Media file selected: ${this.files[0].name}`, 'success');
+                }
+            });
+            
+            captionFile.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    addStatusMessage(`Caption file selected: ${this.files[0].name}`, 'success');
+                }
+            });
+            
+            // Functions
+            function addStatusMessage(message, type = 'info') {
+                const item = document.createElement('div');
+                item.className = `status-item ${type}`;
+                
+                let icon = 'info-circle';
+                if (type === 'success') icon = 'check-circle';
+                if (type === 'error') icon = 'exclamation-circle';
+                if (type === 'warning') icon = 'exclamation-triangle';
+                
+                item.innerHTML = `
+                    <i class="fas fa-${icon}"></i>
+                    <div>[${new Date().toLocaleTimeString()}] ${message}</div>
+                `;
+                
+                statusBox.appendChild(item);
+                statusBox.scrollTop = statusBox.scrollHeight;
+            }
+            
+            function validateTokens() {
+                if (!tokenFile.files.length) {
+                    addStatusMessage('Please select a token file first', 'error');
+                    return;
+                }
+                
+                addStatusMessage('Starting token validation...', 'info');
+                validateBtn.disabled = true;
+                
+                // Simulate token validation (in a real app, this would call your backend)
+                setTimeout(() => {
+                    // Simulated validation results
+                    const valid = Math.floor(Math.random() * 5) + 3;
+                    const invalid = 5 - valid;
+                    
+                    validCount.textContent = valid;
+                    invalidCount.textContent = invalid;
+                    tokenResults.classList.remove('hidden');
+                    
+                    if (valid > 0) {
+                        startBtn.disabled = false;
+                        addStatusMessage(`Token validation complete. ${valid} valid tokens found.`, 'success');
+                    } else {
+                        addStatusMessage('No valid tokens found. Cannot proceed.', 'error');
+                    }
+                    
+                    validateBtn.disabled = false;
+                }, 2000);
+            }
+            
+            function startPosting() {
+                const postType = document.querySelector('.post-type.selected').getAttribute('data-type');
+                const delay = parseInt(delayInput.value) || 10;
+                
+                if (postingActive) return;
+                
+                postingActive = true;
+                startBtn.disabled = true;
+                addStatusMessage(`Starting ${postType} posting with ${delay} second delay...`, 'info');
+                
+                // Simulate posting process
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressBar.style.width = `${progress}%`;
+                    progressPercent.textContent = `${progress}%`;
+                    
+                    if (progress % 20 === 0) {
+                        addStatusMessage(`Posted ${progress/5} items successfully`, 'success');
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        addStatusMessage('Posting process completed successfully!', 'success');
+                        postingActive = false;
+                        startBtn.disabled = false;
+                    }
+                }, 800);
+            }
+            
+            function clearLogs() {
+                statusBox.innerHTML = '';
+                addStatusMessage('Logs cleared. System ready.', 'info');
+            }
+            
+            // Initialize
+            addStatusMessage('System initialized. Ready to configure.', 'info');
+        });
+    </script>
+</body>
+</html>
